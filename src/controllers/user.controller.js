@@ -5,17 +5,17 @@ export const createUser = async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name) {
-      return res.status(400).json({ message: "El user no debe ser vacío." });
+      return res.status(400).json({ message: "El usuario no debe ser nulo." });
     }
 
     if (name.length > 100) {
       return res
         .status(400)
-        .json({ message: "El user no debe pasar los 100 caracteres." });
+        .json({ message: "El usuario no debe pasar los 100 carácteres." });
     }
 
     if (!email) {
-      return res.status(400).json({ message: "El email no debe ser vacío." });
+      return res.status(400).json({ message: "El email no debe ser nulo." });
     }
 
     const emailExists = await UserModel.findOne({ where: { email } });
@@ -31,12 +31,12 @@ export const createUser = async (req, res) => {
     if (!password) {
       return res
         .status(400)
-        .json({ message: "La contraseña no debe estar vacía." });
+        .json({ message: "La contraseña no debe ser nula." });
     }
     if (password.length > 100) {
       return res
         .status(400)
-        .json({ message: "La contraseña no debe pasar los 100 caracteres." });
+        .json({ message: "La contraseña no debe pasar los 100 carácteres." });
     }
 
     const newUser = await UserModel.create({ name, email, password });
@@ -80,37 +80,37 @@ export const updateUser = async (req, res) => {
     const { id } = req.params;
     const { name, email, password } = req.body;
 
-    const UserUpdate = await UserModel.findByPk(id);
-    if (!UserUpdate) {
+    const userUpdate = await UserModel.findByPk(id);
+    if (!userUpdate) {
       return res.status(404).json({ message: "El usuario no existe." });
     }
     if (!name) {
-      return res.status(400).json({ message: "El user no debe ser vacío." });
+      return res.status(400).json({ message: "El usuario no debe ser nulo." });
     }
 
     if (name.length > 100) {
       return res
         .status(400)
-        .json({ message: "El user no debe pasar los 100 caracteres." });
+        .json({ message: "El usuario no debe pasar los 100 carácteres." });
     }
 
     if (!email) {
-      return res.status(400).json({ message: "El email no debe ser vacío." });
+      return res.status(400).json({ message: "El email no debe ser nulo." });
     }
 
     if (!password) {
       return res
         .status(400)
-        .json({ message: "La contraseña no debe estar vacía." });
+        .json({ message: "La contraseña no debe ser nula." });
     }
     if (password.length > 100) {
       return res
         .status(400)
-        .json({ message: "La contraseña no debe pasar los 100 caracteres." });
+        .json({ message: "La contraseña no debe pasar los 100 carácteres." });
     }
 
-    await UserUpdate.update({ name, password, email });
-    return res.status(200).json(UserUpdate);
+    await userUpdate.update({ name, password, email });
+    return res.status(200).json(userUpdate);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -123,9 +123,10 @@ export const deleteUser = async (req, res) => {
 
     const userDelete = await UserModel.findByPk(id);
     if (!userDelete) {
-      return res
-        .status(404)
-        .json({ message: "No se encontró el usuario que esta buscando." });
+      return res.status(404).json({
+        message:
+          "No se encontró el usuario que se está buscando para eliminar.",
+      });
     }
 
     await userDelete.destroy();
