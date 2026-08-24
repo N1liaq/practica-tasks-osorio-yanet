@@ -33,7 +33,7 @@ Un detalle importante es añadir el archivo .env en el .gitignore para no subir 
 Para cargar y acceder a las variables del código, se debe cargar la configuración de dotenv al inicio de la aplicación (index.js o app.js). Las variables estarán disponibles globalmente a través del objeto nativo process.env.
 
 ```bash
-import 'dotenv/config';
+import { config } from "dotenv";
 
 const apiKey = process.env.API_KEY;
 console.log(`Tu API Key es: ${apiKey}`);
