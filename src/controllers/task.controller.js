@@ -1,8 +1,9 @@
 import { TaskModel } from "../models/task.model.js";
+import { UserModel } from "../models/user.model.js";
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, user_id } = req.body;
     let { isComplete } = req.body;
     if (!title) {
       return res.status(400).json({ message: "El título no debe ser nulo." });
@@ -50,7 +51,17 @@ export const createTask = async (req, res) => {
         .json({ message: "Solo se permite valores 'true' o 'false'." });
     }
 
-    const newTask = await TaskModel.create({ title, description, isComplete });
+    if (!user_id) {
+      return res
+        .status(400)
+        .json({ message: "¡El usuario que está buscando no existe!" });
+    }
+    const newTask = await TaskModel.create({
+      title,
+      description,
+      isComplete,
+      user_id,
+    });
     return res.status(201).json(newTask);
   } catch (error) {
     console.log(error);
@@ -60,7 +71,11 @@ export const createTask = async (req, res) => {
 
 export const getAllTasks = async (req, res) => {
   try {
-    const tasks = await TaskModel.findAll();
+    const tasks = await TaskModel.findAll({
+      attributes: {
+        exclude: ["user_id"],
+      },
+    });
     return res.status(200).json(tasks);
   } catch (error) {
     console.log(error);
