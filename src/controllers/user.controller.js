@@ -2,20 +2,20 @@ import { UserModel } from "../models/user.model.js";
 
 export const createUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { nameUser, email, password } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ message: "El usuario no debe ser nulo." });
+    if (!nameUser) {
+      return res.status(400).json({ message: "El usuario no puede ser nulo." });
     }
 
-    if (name.length > 100) {
+    if (nameUser.length > 100) {
       return res
         .status(400)
         .json({ message: "El usuario no debe pasar los 100 carácteres." });
     }
 
     if (!email) {
-      return res.status(400).json({ message: "El email no debe ser nulo." });
+      return res.status(400).json({ message: "El email no puede ser nulo." });
     }
 
     const emailExists = await UserModel.findOne({ where: { email } });
@@ -25,13 +25,13 @@ export const createUser = async (req, res) => {
       console.log("El valor es nulo.");
     } else {
       console.log("El valor ingresado ya existe.");
-      return res.status(400).json({ message: "El email ya esta en uso." });
+      return res.status(400).json({ message: "El email ya está en uso." });
     }
 
     if (!password) {
       return res
         .status(400)
-        .json({ message: "La contraseña no debe ser nula." });
+        .json({ message: "La contraseña no puede ser nula." });
     }
     if (password.length > 100) {
       return res
@@ -39,7 +39,7 @@ export const createUser = async (req, res) => {
         .json({ message: "La contraseña no debe pasar los 100 carácteres." });
     }
 
-    const newUser = await UserModel.create({ name, email, password });
+    const newUser = await UserModel.create({ nameUser, email, password });
     return res.status(201).json(newUser);
   } catch (error) {
     console.log(error);
@@ -78,24 +78,24 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, password } = req.body;
+    const { nameUser, email, password } = req.body;
 
     const userUpdate = await UserModel.findByPk(id);
     if (!userUpdate) {
       return res.status(404).json({ message: "El usuario no existe." });
     }
-    if (!name) {
-      return res.status(400).json({ message: "El usuario no debe ser nulo." });
+    if (!nameUser) {
+      return res.status(400).json({ message: "El usuario no puede ser nulo." });
     }
 
-    if (name.length > 100) {
+    if (nameUser.length > 100) {
       return res
         .status(400)
         .json({ message: "El usuario no debe pasar los 100 carácteres." });
     }
 
     if (!email) {
-      return res.status(400).json({ message: "El email no debe ser nulo." });
+      return res.status(400).json({ message: "El email no puede ser nulo." });
     }
 
     if (!password) {
@@ -109,7 +109,7 @@ export const updateUser = async (req, res) => {
         .json({ message: "La contraseña no debe pasar los 100 carácteres." });
     }
 
-    await userUpdate.update({ name, password, email });
+    await userUpdate.update({ nameUser, password, email });
     return res.status(200).json(userUpdate);
   } catch (error) {
     console.log(error);

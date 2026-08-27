@@ -1,3 +1,4 @@
+import { PersonModel } from "../models/person.model.js";
 import { TaskModel } from "../models/task.model.js";
 import { UserModel } from "../models/user.model.js";
 
@@ -6,7 +7,7 @@ export const createTask = async (req, res) => {
     const { title, description, user_id } = req.body;
     let { isComplete } = req.body;
     if (!title) {
-      return res.status(400).json({ message: "El título no debe ser nulo." });
+      return res.status(400).json({ message: "El título no puede ser nulo." });
     }
 
     if (title.length > 100) {
@@ -21,7 +22,7 @@ export const createTask = async (req, res) => {
       console.log("El valor es nulo.");
     } else {
       console.log("El valor ingresado ya existe.");
-      return res.status(400).json({ message: "El título ya esta en uso." });
+      return res.status(400).json({ message: "El título ya está en uso." });
     }
     if (!description) {
       return res
@@ -34,7 +35,7 @@ export const createTask = async (req, res) => {
         .json({ message: "La descripción no debe pasar los 100 carácteres." });
     }
     if (isComplete === undefined || isComplete === null) {
-      return res.status(400).json({ message: "El valor no debe ser nulo." });
+      return res.status(400).json({ message: "El valor no puede ser nulo." });
     }
     if (typeof isComplete === "string") {
       const isCompleteStringnt = isComplete.trim().toLowerCase();
@@ -75,6 +76,21 @@ export const getAllTasks = async (req, res) => {
       attributes: {
         exclude: ["user_id"],
       },
+      include: [
+        {
+          model: UserModel,
+          as: "author",
+          attributes: {
+            exclude: ["password", "person_id"],
+          },
+        },
+      ],
+      include: [
+        {
+          model: PersonModel,
+          as: "owner",
+        },
+      ],
     });
     return res.status(200).json(tasks);
   } catch (error) {
@@ -91,7 +107,7 @@ export const getTaskById = async (req, res) => {
     if (!taskId) {
       return res
         .status(400)
-        .json({ message: "La tarea no existe o no fue encontrado." });
+        .json({ message: "La tarea no existe o no fue encontrada." });
     }
     return res.status(200).json(taskId);
   } catch (error) {
@@ -112,7 +128,7 @@ export const updateTask = async (req, res) => {
     }
 
     if (!title) {
-      return res.status(400).json({ message: "El título no debe ser nulo." });
+      return res.status(400).json({ message: "El título no puede ser nulo." });
     }
 
     if (title.length > 100) {
@@ -124,7 +140,7 @@ export const updateTask = async (req, res) => {
     if (!description) {
       return res
         .status(400)
-        .json({ message: "La descripción no debe ser nula." });
+        .json({ message: "La descripción no puede ser nula." });
     }
     if (description.length > 100) {
       return res
@@ -133,7 +149,7 @@ export const updateTask = async (req, res) => {
     }
 
     if (isComplete === undefined || isComplete === null) {
-      return res.status(400).json({ message: "El valor no debe ser nulo." });
+      return res.status(400).json({ message: "El valor no puede ser nulo." });
     }
     if (typeof isComplete === "string") {
       const isCompleteStringnt = isComplete.trim().toLowerCase();
