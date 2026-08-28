@@ -1,11 +1,24 @@
 import { UserModel } from "../models/user.model.js";
+import { PersonModel } from "../models/person.model.js";
 
 export const createUser = async (req, res) => {
   try {
-    const { nameUser, email, password } = req.body;
+    const { nameUser, email, password, person_id } = req.body;
 
     if (!nameUser) {
       return res.status(400).json({ message: "El usuario no puede ser nulo." });
+    }
+
+    const nameUserExists = await UserModel.findOne({ where: { nameUser } });
+    console.log(nameUserExists);
+
+    if (!nameUserExists) {
+      console.log("El valor es nulo.");
+    } else {
+      console.log("El valor ingresado ya existe.");
+      return res
+        .status(400)
+        .json({ message: "Este nombre de usuario ya está en uso." });
     }
 
     if (nameUser.length > 100) {
@@ -39,7 +52,26 @@ export const createUser = async (req, res) => {
         .json({ message: "La contraseña no debe pasar los 100 carácteres." });
     }
 
-    const newUser = await UserModel.create({ nameUser, email, password });
+    if (!person_id) {
+      return res.status(400).json({
+        message: "El ID de la persona no puede ser nulo.",
+      });
+    }
+
+    const personExists = await PersonModel.findByPk(person_id);
+    if (!personExists) {
+      return res.status(400).json({
+        message:
+          "¡La persona que esta buscando para vincular su usuario no existe!",
+      });
+    }
+    const newUser = await UserModel.create({
+      nameUser,
+      email,
+      password,
+      person_id,
+    });
+
     return res.status(201).json(newUser);
   } catch (error) {
     console.log(error);
@@ -49,7 +81,17 @@ export const createUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await UserModel.findAll();
+    const users = await UserModel.findAll({
+      attributes: {
+        exclude: ["password", "person_id"],
+      },
+      include: [
+        {
+          model: PersonModel,
+          as: "owner",
+        },
+      ],
+    });
     return res.status(200).json(users);
   } catch (error) {
     console.log(error);
@@ -78,7 +120,7 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nameUser, email, password } = req.body;
+    const { nameUser, email, password, person_id } = req.body;
 
     const userUpdate = await UserModel.findByPk(id);
     if (!userUpdate) {
@@ -86,6 +128,18 @@ export const updateUser = async (req, res) => {
     }
     if (!nameUser) {
       return res.status(400).json({ message: "El usuario no puede ser nulo." });
+    }
+
+    const nameUserExists = await UserModel.findOne({ where: { nameUser } });
+    console.log(nameUserExists);
+
+    if (!nameUserExists) {
+      console.log("El valor es nulo.");
+    } else {
+      console.log("El valor ingresado ya existe.");
+      return res
+        .status(400)
+        .json({ message: "Este nombre de usuario ya está en uso." });
     }
 
     if (nameUser.length > 100) {
@@ -109,7 +163,7 @@ export const updateUser = async (req, res) => {
         .json({ message: "La contraseña no debe pasar los 100 carácteres." });
     }
 
-    await userUpdate.update({ nameUser, password, email });
+    await userUpdate.update({ nameUser, password, email, person_id });
     return res.status(200).json(userUpdate);
   } catch (error) {
     console.log(error);

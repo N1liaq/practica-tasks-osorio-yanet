@@ -76,12 +76,12 @@ export const updatePerson = async (req, res) => {
         .status(400)
         .json({ message: "El apellido no debe pasar los 100 carácteres." });
     }
+    await personUpdate.update({ name, lastname });
+    return res.status(200).json(personUpdate);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
   }
-  await personUpdate.update({ name, lastname });
-  return res.status(200).json(personUpdate);
 };
 export const deletePerson = async (req, res) => {
   try {

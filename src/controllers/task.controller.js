@@ -53,9 +53,16 @@ export const createTask = async (req, res) => {
     }
 
     if (!user_id) {
-      return res
-        .status(400)
-        .json({ message: "¡El usuario que está buscando no existe!" });
+      return res.status(400).json({
+        message: "El ID del usuario no puede ser nulo.",
+      });
+    }
+    const userExists = await UserModel.findByPk(user_id);
+    if (!userExists) {
+      return res.status(400).json({
+        message:
+          "¡El usuario que esta buscando para vincular la tarea no existe!",
+      });
     }
     const newTask = await TaskModel.create({
       title,

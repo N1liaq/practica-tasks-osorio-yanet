@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../config/database.js";
 
 export const PersonModel = sequelize.define(
-  "People",
+  "Person",
   {
     name: {
       type: DataTypes.STRING(100),
