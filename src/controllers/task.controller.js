@@ -100,6 +100,13 @@ export const getAllTasks = async (req, res) => {
         },
       ],
     });
+
+    // if (!tasks) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "No hay tareas ingresadas actualmente." });
+    // }
+
     return res.status(200).json(tasks);
   } catch (error) {
     console.log(error);
@@ -107,29 +114,6 @@ export const getAllTasks = async (req, res) => {
   }
 };
 
-// export const getUserTasks = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const user = await UserModel.findByPk(id, {
-//       attributes: { exclude: ["password", "user_id"] },
-//       include: [
-//         {
-//           model: UserModel,
-//           as: "author",
-//         },
-//       ],
-//     });
-
-//     if (!user) {
-//       return res
-//         .status(404)
-//         .json({ message: "¡El usuario que esta buscando no fue encontrado!" });
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     return res.status(500).json({ message: "Error interno del servidor." });
-//   }
-// };
 export const getTaskById = async (req, res) => {
   try {
     const { id } = req.params;

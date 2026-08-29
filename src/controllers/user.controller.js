@@ -99,6 +99,13 @@ export const getAllUsers = async (req, res) => {
         },
       ],
     });
+
+    // if (!users) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "No hay usuarios ingresados actualmente." });
+    // }
+
     return res.status(200).json(users);
   } catch (error) {
     console.log(error);
@@ -120,11 +127,11 @@ export const getUserTasks = async (req, res) => {
       ],
     });
 
-    if (!user) {
-      return res
-        .status(404)
-        .json({ message: "¡El usuario que está buscando no fue encontrado!" });
-    }
+    // if (!user) {
+    //   return res
+    //     .status(404)
+    //     .json({ message: "¡El usuario que está buscando no fue encontrado!" });
+    // }
 
     return res.status(200).json(user);
   } catch (error) {
