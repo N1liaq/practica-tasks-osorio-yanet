@@ -1,4 +1,3 @@
-import { PersonModel } from "../models/person.model.js";
 import { TaskModel } from "../models/task.model.js";
 import { UserModel } from "../models/user.model.js";
 
@@ -6,6 +5,7 @@ export const createTask = async (req, res) => {
   try {
     const { title, description, user_id } = req.body;
     let { isComplete } = req.body;
+
     if (!title) {
       return res.status(400).json({ message: "El título no puede ser nulo." });
     }
@@ -52,16 +52,17 @@ export const createTask = async (req, res) => {
         .json({ message: "Solo se permite valores 'true' o 'false'." });
     }
 
+    const userIdExists = await UserModel.findByPk(user_id);
     if (!user_id) {
-      return res.status(400).json({
-        message: "El ID del usuario no puede ser nulo.",
-      });
+      return res
+        .status(400)
+        .json({ message: "El ID del usuario no puede ser nulo." });
     }
-    const userExists = await UserModel.findByPk(user_id);
-    if (!userExists) {
-      return res.status(400).json({
+
+    if (!userIdExists) {
+      return res.status(404).json({
         message:
-          "¡El usuario que esta buscando para vincular la tarea no existe!",
+          "¡El usuario que esta buscando para vincular la tarea no fue encontrado!",
       });
     }
     const newTask = await TaskModel.create({
@@ -88,14 +89,14 @@ export const getAllTasks = async (req, res) => {
           model: UserModel,
           as: "author",
           attributes: {
-            exclude: ["password", "person_id"],
+            exclude: ["password", "user_id"],
           },
         },
       ],
       include: [
         {
-          model: PersonModel,
-          as: "owner",
+          model: UserModel,
+          as: "author",
         },
       ],
     });
@@ -106,17 +107,64 @@ export const getAllTasks = async (req, res) => {
   }
 };
 
+// export const getUserTasks = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const user = await UserModel.findByPk(id, {
+//       attributes: { exclude: ["password", "user_id"] },
+//       include: [
+//         {
+//           model: UserModel,
+//           as: "author",
+//         },
+//       ],
+//     });
+
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ message: "¡El usuario que esta buscando no fue encontrado!" });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({ message: "Error interno del servidor." });
+//   }
+// };
 export const getTaskById = async (req, res) => {
   try {
     const { id } = req.params;
-    const taskId = await TaskModel.findByPk(id);
 
-    if (!taskId) {
+    if (!id) {
       return res
         .status(400)
-        .json({ message: "La tarea no existe o no fue encontrada." });
+        .json({ message: "El ID la tarea no puede ser nulo." });
     }
-    return res.status(200).json(taskId);
+    const taskIdExists = await TaskModel.findByPk(id, {
+      attributes: {
+        exclude: ["user_id"],
+      },
+      include: [
+        {
+          model: UserModel,
+          as: "author",
+          attributes: {
+            exclude: ["password", "user_id"],
+          },
+        },
+      ],
+      include: [
+        {
+          model: UserModel,
+          as: "author",
+        },
+      ],
+    });
+
+    if (!taskIdExists) {
+      return res.status(404).json({ message: "La tarea no fue encontrada." });
+    }
+
+    return res.status(200).json(taskIdExists);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -126,12 +174,41 @@ export const getTaskById = async (req, res) => {
 export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description } = req.body;
+    const { title, description, user_id } = req.body;
     let { isComplete } = req.body;
 
-    const taskUpdate = await TaskModel.findByPk(id);
-    if (!taskUpdate) {
-      return res.status(404).json({ message: "La tarea no existe." });
+    const taskUpdateExists = await TaskModel.findByPk(id, {
+      attributes: {
+        exclude: ["user_id"],
+      },
+      include: [
+        {
+          model: UserModel,
+          as: "author",
+          attributes: {
+            exclude: ["password", "user_id"],
+          },
+        },
+      ],
+      include: [
+        {
+          model: UserModel,
+          as: "author",
+        },
+      ],
+    });
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "El ID de la tarea no puede ser nulo." });
+    }
+
+    if (!taskUpdateExists) {
+      return res.status(404).json({
+        message:
+          "¡El ID de la tarea que esta buscando para actualizar no fue encontrado!",
+      });
     }
 
     if (!title) {
@@ -142,6 +219,15 @@ export const updateTask = async (req, res) => {
       return res
         .status(400)
         .json({ message: "El título no debe pasar los 100 carácteres." });
+    }
+
+    const titleExists = await TaskModel.findOne({ where: { title } });
+
+    if (!titleExists) {
+      console.log("El valor es nulo.");
+    } else {
+      console.log("El valor ingresado ya existe.");
+      return res.status(400).json({ message: "El título ya está en uso." });
     }
 
     if (!description) {
@@ -172,9 +258,22 @@ export const updateTask = async (req, res) => {
         .status(400)
         .json({ message: "Solo se permite valores 'true' o 'false'." });
     }
+    const userIdExists = await UserModel.findByPk(user_id);
+    if (!user_id) {
+      return res
+        .status(400)
+        .json({ message: "El ID del usuario no puede ser nulo." });
+    }
 
-    await taskUpdate.update({ title, description, isComplete });
-    return res.status(200).json(taskUpdate);
+    if (!userIdExists) {
+      return res.status(404).json({
+        message:
+          "¡El usuario que esta buscando para vincular la tarea no fue encontrado!",
+      });
+    }
+
+    await taskUpdateExists.update({ title, description, isComplete, user_id });
+    return res.status(200).json(taskUpdateExists);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -185,14 +284,22 @@ export const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const taskDelete = await TaskModel.findByPk(id);
-    if (!taskDelete) {
+    const taskDeleteExists = await TaskModel.findByPk(id);
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "El ID de la tarea no puede ser nulo." });
+    }
+
+    if (!taskDeleteExists) {
       return res.status(404).json({
-        message: "No se encontró la tarea que se está buscando para eliminar.",
+        message:
+          "¡El ID de la tarea que esta buscando para eliminar no fue encontrado!",
       });
     }
 
-    await taskDelete.destroy();
+    await taskDeleteExists.destroy();
     res.status(200).json({ message: "La tarea fue eliminada correctamente." });
   } catch (error) {
     console.log(error);
