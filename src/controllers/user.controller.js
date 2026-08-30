@@ -65,7 +65,9 @@ export const createUser = async (req, res) => {
       });
     }
 
-    const personIdExists = await UserModel.findByPk(person_id);
+    const { id } = req.params;
+
+    const personIdExists = await UserModel.findByPk(id);
     if (personIdExists) {
       return res.status(400).json({
         message: "¡Está persona ya tiene un usuario!",
