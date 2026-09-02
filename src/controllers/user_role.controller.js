@@ -6,17 +6,14 @@ export const createUserRol = async (req, res) => {
   try {
     const { user_id, role_id } = req.body;
 
-    const { id } = req.params;
-
-    const userExists = await UserModel.findByPk(id);
-
-    const roleExists = await RoleModel.findByPk(id);
-
-    if (!id) {
-      return res
-        .status(400)
-        .json({ message: "El ID del usuario no puede ser nulo." });
+    if (!user_id || !role_id) {
+      return res.status(400).json({
+        message: "El user_id y el role_id son obligatorios.",
+      });
     }
+    const userExists = await UserModel.findByPk(user_id);
+
+    const roleExists = await RoleModel.findByPk(role_id);
 
     if (!userExists) {
       return res.status(404).json({
@@ -30,7 +27,7 @@ export const createUserRol = async (req, res) => {
       });
     }
 
-    const newUserRole = await UserModel.create({
+    const newUserRole = await UserRoleModel.create({
       user_id,
       role_id,
     });
@@ -43,7 +40,19 @@ export const createUserRol = async (req, res) => {
 };
 export const getAllUserRol = async (req, res) => {
   try {
-    const allUserRole = await UserRoleModel.findAll();
+    const allUserRole = await UserRoleModel.findAll({
+      include: [
+        {
+          model: UserModel,
+          as: "users",
+          attributes: { exclude: ["password"] },
+        },
+        {
+          model: RoleModel,
+          as: "roles",
+        },
+      ],
+    });
     return res.status(200).json(allUserRole);
   } catch (error) {
     console.log(error);
@@ -54,7 +63,23 @@ export const getUserRolById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const userRole = await UserRoleModel.findByPk(id);
+    const userRole = await UserRoleModel.findByPk(id, {
+      attributes: {
+        include: [
+          {
+            model: UserModel,
+            as: "users",
+          },
+        ],
+        exclude: ["password"],
+        include: [
+          {
+            model: RoleModel,
+            as: "roles",
+          },
+        ],
+      },
+    });
 
     return res.status(200).json(userRole);
   } catch (error) {
@@ -66,18 +91,32 @@ export const updateUserRol = async (req, res) => {
   try {
     const { user_id, role_id } = req.body;
 
-    const { id } = req.params;
+    const userExists = await UserModel.findByPk(user_id);
 
-    const userRoleUpdateExists = await UserRoleModel.findByPk(id);
+    const roleExists = await RoleModel.findByPk(role_id);
 
-    const userExists = await UserModel.findByPk(id);
+    const userRoleUpdateExists = await UserRoleModel.findByPk(id, {
+      attributes: {
+        include: [
+          {
+            model: UserModel,
+            as: "users",
+          },
+        ],
+        exclude: ["password"],
+        include: [
+          {
+            model: RoleModel,
+            as: "roles",
+          },
+        ],
+      },
+    });
 
-    const roleExists = await RoleModel.findByPk(id);
-
-    if (!id) {
-      return res
-        .status(400)
-        .json({ message: "El ID del usuario no puede ser nulo." });
+    if (!user_id || !role_id) {
+      return res.status(400).json({
+        message: "El user_id y el role_id son obligatorios.",
+      });
     }
 
     if (!userExists) {

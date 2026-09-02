@@ -1,4 +1,5 @@
 import { RoleModel } from "../models/role.model.js";
+import { UserModel } from "../models/user.model.js";
 
 export const createRole = async (req, res) => {
   try {
@@ -79,6 +80,7 @@ export const updateRole = async (req, res) => {
     if (!id) {
       return res.status(400).json("El ID del rol no puede ser nulo.");
     }
+
     const roleUpdateExists = await RoleModel.findByPk(id);
 
     if (!roleUpdateExists) {
