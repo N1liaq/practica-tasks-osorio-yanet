@@ -38,6 +38,7 @@ export const createUserRol = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const getAllUserRol = async (req, res) => {
   try {
     const allUserRole = await UserRoleModel.findAll({
@@ -59,6 +60,7 @@ export const getAllUserRol = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const getUserRolById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,6 +85,7 @@ export const getUserRolById = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const updateUserRol = async (req, res) => {
   try {
     const { id } = req.params;

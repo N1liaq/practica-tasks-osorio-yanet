@@ -28,6 +28,7 @@ export const CreatePerson = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const getAllPerson = async (req, res) => {
   try {
     const people = await PersonModel.findAll();
@@ -44,6 +45,7 @@ export const getAllPerson = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const getPersonById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,6 +68,7 @@ export const getPersonById = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const updatePerson = async (req, res) => {
   try {
     const { id } = req.params;
@@ -106,6 +109,9 @@ export const updatePerson = async (req, res) => {
         .json({ message: "El apellido no debe pasar los 100 carácteres." });
     }
     await personUpdateExists.update({ name, lastname });
+
+    await personUpdateExists.reload();
+
     return res.status(200).json(personUpdateExists);
   } catch (error) {
     console.log(error);
