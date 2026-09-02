@@ -1,5 +1,4 @@
 import { RoleModel } from "../models/role.model.js";
-import { UserModel } from "../models/user.model.js";
 
 export const createRole = async (req, res) => {
   try {
@@ -53,6 +52,7 @@ export const getAllRoles = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const getRoleById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -111,12 +111,16 @@ export const updateRole = async (req, res) => {
     }
 
     await roleUpdateExists.update({ roleName });
+
+    await roleUpdateExists.reload();
+
     return res.status(200).json(roleUpdateExists);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const deleteRole = async (req, res) => {
   try {
     const { id } = req.params;

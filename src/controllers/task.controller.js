@@ -243,6 +243,7 @@ export const updateTask = async (req, res) => {
         .json({ message: "Solo se permite valores 'true' o 'false'." });
     }
     const userIdExists = await UserModel.findByPk(user_id);
+
     if (!user_id) {
       return res
         .status(400)
@@ -257,6 +258,9 @@ export const updateTask = async (req, res) => {
     }
 
     await taskUpdateExists.update({ title, description, isComplete, user_id });
+
+    await taskUpdateExists.reload();
+
     return res.status(200).json(taskUpdateExists);
   } catch (error) {
     console.log(error);

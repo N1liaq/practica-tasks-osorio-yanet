@@ -141,6 +141,7 @@ export const getUserTasks = async (req, res) => {
     return res.status(500).json({ message: "Error interno del servidor." });
   }
 };
+
 export const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -274,6 +275,8 @@ export const updateUser = async (req, res) => {
     }
 
     await userUpdateExists.update({ nameUser, password, email, person_id });
+
+    await userUpdateExists.reload();
     return res.status(200).json(userUpdateExists);
   } catch (error) {
     console.log(error);
