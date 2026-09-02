@@ -64,21 +64,17 @@ export const getUserRolById = async (req, res) => {
     const { id } = req.params;
 
     const userRole = await UserRoleModel.findByPk(id, {
-      attributes: {
-        include: [
-          {
-            model: UserModel,
-            as: "users",
-          },
-        ],
-        exclude: ["password"],
-        include: [
-          {
-            model: RoleModel,
-            as: "roles",
-          },
-        ],
-      },
+      include: [
+        {
+          model: UserModel,
+          as: "users",
+          attributes: { exclude: ["password"] },
+        },
+        {
+          model: RoleModel,
+          as: "roles",
+        },
+      ],
     });
 
     return res.status(200).json(userRole);
@@ -89,39 +85,29 @@ export const getUserRolById = async (req, res) => {
 };
 export const updateUserRol = async (req, res) => {
   try {
-    const { user_id, role_id } = req.body;
+    const { id } = req.params;
 
-    const userExists = await UserModel.findByPk(user_id);
+    const { role_id } = req.body;
 
     const roleExists = await RoleModel.findByPk(role_id);
 
     const userRoleUpdateExists = await UserRoleModel.findByPk(id, {
-      attributes: {
-        include: [
-          {
-            model: UserModel,
-            as: "users",
-          },
-        ],
-        exclude: ["password"],
-        include: [
-          {
-            model: RoleModel,
-            as: "roles",
-          },
-        ],
-      },
+      include: [
+        {
+          model: UserModel,
+          as: "users",
+          attributes: { exclude: ["password"] },
+        },
+        {
+          model: RoleModel,
+          as: "roles",
+        },
+      ],
     });
 
-    if (!user_id || !role_id) {
+    if (!role_id) {
       return res.status(400).json({
-        message: "El user_id y el role_id son obligatorios.",
-      });
-    }
-
-    if (!userExists) {
-      return res.status(404).json({
-        message: "¡El usuario que está buscando no fue encontrado!",
+        message: "El role_id son obligatorios.",
       });
     }
 
@@ -137,7 +123,10 @@ export const updateUserRol = async (req, res) => {
           "¡El ID del usuarioRol que está buscando para utilizar no fue encontrado!",
       });
     }
-    await userRoleUpdateExists.update({ user_id, role_id });
+    await userRoleUpdateExists.update({ role_id });
+
+    await userRoleUpdateExists.reload();
+
     return res.status(200).json(userRoleUpdateExists);
   } catch (error) {
     console.log(error);
