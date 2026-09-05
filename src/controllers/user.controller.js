@@ -1,86 +1,11 @@
 import { UserModel } from "../models/user.model.js";
 import { PersonModel } from "../models/person.model.js";
 import { TaskModel } from "../models/task.model.js";
+import { matchedData } from "express-validator";
 export const createUser = async (req, res) => {
   try {
-    const { nameUser, email, password, person_id } = req.body;
-
-    if (!nameUser) {
-      return res.status(400).json({ message: "El usuario no puede ser nulo." });
-    }
-
-    const nameUserExists = await UserModel.findOne({ where: { nameUser } });
-    console.log(nameUserExists);
-
-    if (!nameUserExists) {
-      console.log("El valor es nulo.");
-    } else {
-      console.log("El valor ingresado ya existe.");
-      return res
-        .status(400)
-        .json({ message: "Este nombre de usuario ya está en uso." });
-    }
-
-    if (nameUser.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "El usuario no debe pasar los 100 carácteres." });
-    }
-
-    if (!email) {
-      return res.status(400).json({ message: "El email no puede ser nulo." });
-    }
-
-    const emailExists = await UserModel.findOne({ where: { email } });
-    console.log(emailExists);
-
-    if (!emailExists) {
-      console.log("El valor es nulo.");
-    } else {
-      console.log("El valor ingresado ya existe.");
-      return res.status(400).json({ message: "El email ya está en uso." });
-    }
-
-    if (!password) {
-      return res
-        .status(400)
-        .json({ message: "La contraseña no puede ser nula." });
-    }
-    if (password.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "La contraseña no debe pasar los 100 carácteres." });
-    }
-
-    const personExists = await PersonModel.findByPk(person_id);
-    if (!person_id) {
-      return res
-        .status(400)
-        .json({ message: "El ID de la persona no puede ser nulo." });
-    }
-    if (!personExists) {
-      return res.status(404).json({
-        message:
-          "¡La persona que esta buscando para vincular su usuario no fue encontrada!",
-      });
-    }
-
-    const { id } = req.params;
-
-    const personIdExists = await UserModel.findByPk(id);
-    if (personIdExists) {
-      return res.status(400).json({
-        message: "¡Está persona ya tiene un usuario!",
-      });
-    }
-
-    const newUser = await UserModel.create({
-      nameUser,
-      email,
-      password,
-      person_id,
-    });
-
+    const validatedData = matchedData(req);
+    const user = await UserModel.create(validatedData);
     return res.status(201).json(newUser);
   } catch (error) {
     console.log(error);
