@@ -6,9 +6,7 @@ export const createUserValidation = [
   body("nameUser")
     .notEmpty()
     .withMessage("El nameUser no debe ser vacío.")
-
     .isString()
-
     .isLength({ max: 100 })
     .withMessage("El nameUser no debe pasar los 100 carácteres.")
 
@@ -35,19 +33,17 @@ export const createUserValidation = [
 
   body("password")
     .notEmpty()
-    .isString()
     .withMessage("La password no debe ser vacía.")
-
+    .isString()
     .isLength({ max: 100 })
     .withMessage("La password no debe pasar los 100 carácteres."),
 
   body("person_id")
     .notEmpty()
+    .withMessage("El person_id no debe ser vacío.")
     .custom((value) => typeof value === "number")
     .withMessage("El person_id debe ser de tipo number.")
     .isInt()
-    .withMessage("El person_id debe ser númmerico.")
-    .withMessage("El person_id no debe ser vacío.")
 
     .custom(async (person_id) => {
       const personExists = await PersonModel.findByPk(person_id);
@@ -63,23 +59,24 @@ export const createUserValidation = [
 ];
 
 export const getUserTasksValidation = [
-  param("id").notEmpty().isInt().withMessage("El ID debe ser númmerico."),
+  param("id")
+    .notEmpty()
+    .withMessage("El ID del usuario no puede ser nulo.")
+    .isInt(),
 ];
 
 export const getUserByIdValidation = [
   param("id")
     .notEmpty()
     .withMessage("El ID del usuario no puede ser nulo.")
-    .isInt()
-    .withMessage("El ID debe ser númmerico."),
+    .isInt(),
 ];
 
 export const updateUserValidation = [
   param("id")
     .notEmpty()
     .withMessage("El ID del usuario no puede ser nulo.")
-    .isInt()
-    .withMessage("El ID debe ser númmerico."),
+    .isInt(),
 
   body("nameUser")
     .optional()
@@ -128,6 +125,5 @@ export const deleteUserValidation = [
   param("id")
     .notEmpty()
     .withMessage("El ID del usuario no puede ser nulo.")
-    .isInt()
-    .withMessage("El ID debe ser númmerico."),
+    .isInt(),
 ];

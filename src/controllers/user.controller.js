@@ -89,7 +89,7 @@ export const getUserById = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const validatedData = matchedData(req);
-    const { id, dataToUpdate } = validatedData;
+    const { id } = validatedData;
 
     const userUpdateExists = await UserModel.findByPk(id, {
       attributes: {

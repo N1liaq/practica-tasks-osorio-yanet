@@ -1,77 +1,12 @@
+import { matchedData } from "express-validator";
 import { TaskModel } from "../models/task.model.js";
 import { UserModel } from "../models/user.model.js";
 
 export const createTask = async (req, res) => {
   try {
-    const { title, description, user_id } = req.body;
-    let { isComplete } = req.body;
-
-    if (!title) {
-      return res.status(400).json({ message: "El título no puede ser nulo." });
-    }
-
-    if (title.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "El título no debe pasar los 100 carácteres." });
-    }
-
-    const titleExists = await TaskModel.findOne({ where: { title } });
-
-    if (!titleExists) {
-      console.log("El valor es nulo.");
-    } else {
-      console.log("El valor ingresado ya existe.");
-      return res.status(400).json({ message: "El título ya está en uso." });
-    }
-    if (!description) {
-      return res
-        .status(400)
-        .json({ message: "La descripción no debe ser nula." });
-    }
-    if (description.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "La descripción no debe pasar los 100 carácteres." });
-    }
-    if (isComplete === undefined || isComplete === null) {
-      return res.status(400).json({ message: "El valor no puede ser nulo." });
-    }
-    if (typeof isComplete === "string") {
-      const isCompleteStringnt = isComplete.trim().toLowerCase();
-      if (isCompleteStringnt === "true") {
-        isComplete = true;
-      }
-      if (isCompleteStringnt === "false") {
-        isComplete = false;
-      }
-    }
-    if (typeof isComplete !== "boolean") {
-      return res
-        .status(400)
-        .json({ message: "Solo se permite valores 'true' o 'false'." });
-    }
-
-    const userIdExists = await UserModel.findByPk(user_id);
-    if (!user_id) {
-      return res
-        .status(400)
-        .json({ message: "El ID del usuario no puede ser nulo." });
-    }
-
-    if (!userIdExists) {
-      return res.status(404).json({
-        message:
-          "¡El usuario que esta buscando para vincular la tarea no fue encontrado!",
-      });
-    }
-    const newTask = await TaskModel.create({
-      title,
-      description,
-      isComplete,
-      user_id,
-    });
-    return res.status(201).json(newTask);
+    const validatedData = matchedData(req);
+    await TaskModel.create(validatedData);
+    return res.status(201).json(validatedData);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -101,12 +36,6 @@ export const getAllTasks = async (req, res) => {
       ],
     });
 
-    // if (!tasks) {
-    //   return res
-    //     .status(404)
-    //     .json({ message: "No hay tareas ingresadas actualmente." });
-    // }
-
     return res.status(200).json(tasks);
   } catch (error) {
     console.log(error);
@@ -116,13 +45,9 @@ export const getAllTasks = async (req, res) => {
 
 export const getTaskById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const validatedData = matchedData(req);
+    const { id } = validatedData;
 
-    if (!id) {
-      return res
-        .status(400)
-        .json({ message: "El ID la tarea no puede ser nulo." });
-    }
     const taskIdExists = await TaskModel.findByPk(id, {
       attributes: {
         exclude: ["user_id"],
@@ -157,9 +82,8 @@ export const getTaskById = async (req, res) => {
 
 export const updateTask = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { title, description, user_id } = req.body;
-    let { isComplete } = req.body;
+    const validatedData = matchedData(req);
+    const { id } = validatedData;
 
     const taskUpdateExists = await TaskModel.findByPk(id, {
       attributes: {
@@ -182,12 +106,6 @@ export const updateTask = async (req, res) => {
       ],
     });
 
-    if (!id) {
-      return res
-        .status(400)
-        .json({ message: "El ID de la tarea no puede ser nulo." });
-    }
-
     if (!taskUpdateExists) {
       return res.status(404).json({
         message:
@@ -195,69 +113,7 @@ export const updateTask = async (req, res) => {
       });
     }
 
-    if (!title) {
-      return res.status(400).json({ message: "El título no puede ser nulo." });
-    }
-
-    if (title.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "El título no debe pasar los 100 carácteres." });
-    }
-
-    const titleExists = await TaskModel.findOne({ where: { title } });
-
-    if (!titleExists) {
-      console.log("El valor es nulo.");
-    } else {
-      console.log("El valor ingresado ya existe.");
-      return res.status(400).json({ message: "El título ya está en uso." });
-    }
-
-    if (!description) {
-      return res
-        .status(400)
-        .json({ message: "La descripción no puede ser nula." });
-    }
-    if (description.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "La descripción no debe pasar los 100 carácteres." });
-    }
-
-    if (isComplete === undefined || isComplete === null) {
-      return res.status(400).json({ message: "El valor no puede ser nulo." });
-    }
-    if (typeof isComplete === "string") {
-      const isCompleteStringnt = isComplete.trim().toLowerCase();
-      if (isCompleteStringnt === "true") {
-        isComplete = true;
-      }
-      if (isCompleteStringnt === "false") {
-        isComplete = false;
-      }
-    }
-    if (typeof isComplete !== "boolean") {
-      return res
-        .status(400)
-        .json({ message: "Solo se permite valores 'true' o 'false'." });
-    }
-    const userIdExists = await UserModel.findByPk(user_id);
-
-    if (!user_id) {
-      return res
-        .status(400)
-        .json({ message: "El ID del usuario no puede ser nulo." });
-    }
-
-    if (!userIdExists) {
-      return res.status(404).json({
-        message:
-          "¡El usuario que esta buscando para vincular la tarea no fue encontrado!",
-      });
-    }
-
-    await taskUpdateExists.update({ title, description, isComplete, user_id });
+    await taskUpdateExists.update(validatedData);
 
     await taskUpdateExists.reload();
 
@@ -270,15 +126,10 @@ export const updateTask = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
   try {
-    const { id } = req.params;
+    const validatedData = matchedData(req);
+    const { id } = validatedData;
 
     const taskDeleteExists = await TaskModel.findByPk(id);
-
-    if (!id) {
-      return res
-        .status(400)
-        .json({ message: "El ID de la tarea no puede ser nulo." });
-    }
 
     if (!taskDeleteExists) {
       return res.status(404).json({

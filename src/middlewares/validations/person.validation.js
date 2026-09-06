@@ -20,8 +20,7 @@ export const getPersonByIdValidation = [
   param("id")
     .notEmpty()
     .withMessage("El ID de la persona no puede ser nulo.")
-    .isInt()
-    .withMessage("El ID debe ser númmerico."),
+    .isInt(),
 ];
 
 export const updatePersonValidation = [
@@ -43,14 +42,12 @@ export const updatePersonValidation = [
   param("id")
     .notEmpty()
     .withMessage("El ID de la persona no puede ser nulo.")
-    .isInt()
-    .withMessage("El ID debe ser númmerico."),
+    .isInt(),
 ];
 
 export const deletePersonValidation = [
   param("id")
     .notEmpty()
     .withMessage("El ID de la persona no puede ser nulo.")
-    .isInt()
-    .withMessage("El ID debe ser númmerico."),
+    .isInt(),
 ];

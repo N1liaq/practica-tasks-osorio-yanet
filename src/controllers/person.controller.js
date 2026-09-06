@@ -45,7 +45,7 @@ export const getPersonById = async (req, res) => {
 export const updatePerson = async (req, res) => {
   try {
     const validatedData = matchedData(req);
-    const { id, dataToUpdate } = validatedData;
+    const { id } = validatedData;
 
     const personUpdateExists = await PersonModel.findByPk(id);
 
