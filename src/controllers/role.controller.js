@@ -1,35 +1,11 @@
+import { matchedData } from "express-validator";
 import { RoleModel } from "../models/role.model.js";
 
 export const createRole = async (req, res) => {
   try {
-    const { roleName } = req.body;
-
-    if (!roleName) {
-      return res.status(400).json({ message: "El rol no puede ser nulo." });
-    }
-
-    if (roleName.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "El rol no puede pasar los 100 carácteres." });
-    }
-
-    const roleNameExists = await RoleModel.findOne({ where: { roleName } });
-
-    if (!roleNameExists) {
-      console.log("El valor es nulo.");
-    } else {
-      console.log("el valor ingresado existe.");
-      return res
-        .status(400)
-        .json({ message: "Este rol que ingresó ya existe." });
-    }
-
-    const newRole = await RoleModel.create({
-      roleName,
-    });
-
-    return res.status(201).json(newRole);
+    const validatedData = matchedData(req);
+    await RoleModel.create(validatedData);
+    return res.status(201).json(validatedData);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -40,12 +16,6 @@ export const getAllRoles = async (req, res) => {
   try {
     const roles = await RoleModel.findAll();
 
-    // if (!roles) {
-    //   return res
-    //     .status(404)
-    //     .json({ message: "No hay roles ingresados actualmente." });
-    // }
-
     return res.status(200).json(roles);
   } catch (error) {
     console.log(error);
@@ -55,11 +25,10 @@ export const getAllRoles = async (req, res) => {
 
 export const getRoleById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const validatedData = matchedData(req);
+    const { id } = validatedData;
     const roleIdExists = await RoleModel.findByPk(id);
-    if (!id) {
-      return res.status(400).json("El ID del rol no puede ser nulo.");
-    }
+
     if (!roleIdExists) {
       return res
         .status(404)
@@ -74,12 +43,9 @@ export const getRoleById = async (req, res) => {
 
 export const updateRole = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { roleName } = req.body;
+    const validatedData = matchedData(req);
 
-    if (!id) {
-      return res.status(400).json("El ID del rol no puede ser nulo.");
-    }
+    const { id } = validatedData;
 
     const roleUpdateExists = await RoleModel.findByPk(id);
 
@@ -89,32 +55,11 @@ export const updateRole = async (req, res) => {
       });
     }
 
-    if (!roleName) {
-      return res.status(400).json({ message: "El rol no puede ser nulo." });
-    }
-
-    if (roleName.length > 100) {
-      return res
-        .status(400)
-        .json({ message: "El rol no puede pasar los 100 carácteres." });
-    }
-
-    const roleNameExists = await RoleModel.findOne({ where: { roleName } });
-
-    if (!roleNameExists) {
-      console.log("El valor es nulo.");
-    } else {
-      console.log("el valor ingresado existe.");
-      return res
-        .status(400)
-        .json({ message: "Este rol que ingresó ya existe." });
-    }
-
-    await roleUpdateExists.update({ roleName });
+    await roleUpdateExists.update(validatedData);
 
     await roleUpdateExists.reload();
 
-    return res.status(200).json(roleUpdateExists);
+    return res.status(201).json(roleUpdateExists);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -123,10 +68,10 @@ export const updateRole = async (req, res) => {
 
 export const deleteRole = async (req, res) => {
   try {
-    const { id } = req.params;
-    if (!id) {
-      return res.status(400).json("El ID del rol no puede ser nulo.");
-    }
+    const validatedData = matchedData(req);
+
+    const { id } = validatedData;
+
     const RoleDeleteExists = await RoleModel.findByPk(id);
 
     if (!RoleDeleteExists) {
