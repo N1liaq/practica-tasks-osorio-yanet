@@ -54,7 +54,13 @@ export const updateUserRolValidation = [
     .withMessage("El role_id no debe ser vacío.")
     .custom((value) => typeof value === "number")
     .withMessage("El role_id debe ser de tipo number.")
-    .isInt(),
+    .isInt()
+    .custom(async (role_id) => {
+      const roleExists = await RoleModel.findByPk(role_id);
+      if (!roleExists) {
+        throw new Error("El role_id ingresado no fue encontrado.");
+      }
+    }),
 ];
 
 export const deleteUserRolValidation = [
