@@ -4,6 +4,8 @@ export const createPersonValidation = [
   body("name")
     .notEmpty()
     .withMessage("El name no debe ser vacío.")
+    .isAlpha()
+    .withMessage("El name debe contener solo letras.")
     .isString()
     .isLength({ max: 100 })
     .withMessage("El name no debe pasar los 100 carácteres."),
@@ -11,6 +13,8 @@ export const createPersonValidation = [
   body("lastname")
     .notEmpty()
     .withMessage("El lastname no debe ser vacío.")
+    .isAlpha()
+    .withMessage("El lastname debe contener solo letras.")
     .isString()
     .isLength({ max: 100 })
     .withMessage("El lastname no debe pasar los 100 carácteres."),
@@ -33,6 +37,8 @@ export const updatePersonValidation = [
     .optional()
     .notEmpty()
     .withMessage("El name no debe ser vacío.")
+    .isAlpha()
+    .withMessage("El name debe contener solo letras.")
     .isString()
     .isLength({ max: 100 })
     .withMessage("El name no debe pasar los 100 carácteres."),
@@ -41,6 +47,8 @@ export const updatePersonValidation = [
     .optional()
     .notEmpty()
     .withMessage("El lastname no debe ser vacío.")
+    .isAlpha()
+    .withMessage("El lastname debe contener solo letras.")
     .isString()
     .isLength({ max: 100 })
     .withMessage("El lastname no debe pasar los 100 carácteres."),
