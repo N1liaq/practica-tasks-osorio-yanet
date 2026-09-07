@@ -20,11 +20,11 @@ export const createRoleValidation = [
 ];
 
 export const getRoleByIdValidation = [
-  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo."),
 ];
 
 export const updateRoleValidation = [
-  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo."),
 
   body("roleName")
     .notEmpty()
@@ -42,5 +42,5 @@ export const updateRoleValidation = [
 ];
 
 export const deleteRoleValidation = [
-  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo."),
 ];

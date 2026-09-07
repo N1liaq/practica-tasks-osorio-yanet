@@ -50,17 +50,11 @@ export const createTaskValidation = [
 ];
 
 export const getTaskByIdValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID de la tarea no debe ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID de la tarea no debe ser nulo."),
 ];
 
 export const updateTaskValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del tarea no debe ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del tarea no debe ser nulo."),
 
   body("title")
     .optional()
@@ -102,8 +96,5 @@ export const updateTaskValidation = [
 ];
 
 export const deleteTaskValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del usuario no debe ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del usuario no debe ser nulo."),
 ];

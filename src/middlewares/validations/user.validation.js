@@ -59,24 +59,15 @@ export const createUserValidation = [
 ];
 
 export const getUserTasksValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del usuario no debe ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del usuario no debe ser nulo."),
 ];
 
 export const getUserByIdValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del usuario no debe ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del usuario no debe ser nulo."),
 ];
 
 export const updateUserValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del usuario no debe ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del usuario no debe ser nulo."),
 
   body("nameUser")
     .optional()
@@ -122,8 +113,5 @@ export const updateUserValidation = [
 ];
 
 export const deleteUserValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del usuario no debe ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del usuario no debe ser nulo."),
 ];
