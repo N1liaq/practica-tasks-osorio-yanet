@@ -31,7 +31,7 @@ export const getRoleById = async (req, res) => {
 
     if (!roleIdExists) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "¡El rol que está buscando no fue encontrado!" });
     }
     return res.status(200).json(roleIdExists);
@@ -50,7 +50,7 @@ export const updateRole = async (req, res) => {
     const roleUpdateExists = await RoleModel.findByPk(id);
 
     if (!roleUpdateExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "¡El rol que está buscando para actualizar no fue encontrado!",
       });
     }
@@ -75,7 +75,7 @@ export const deleteRole = async (req, res) => {
     const RoleDeleteExists = await RoleModel.findByPk(id);
 
     if (!RoleDeleteExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "¡El rol que está buscando para actualizar no fue encontrado!",
       });
     }

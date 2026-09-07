@@ -20,17 +20,11 @@ export const createRoleValidation = [
 ];
 
 export const getRoleByIdValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del rol no puede ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
 ];
 
 export const updateRoleValidation = [
-  param("id")
-    .notEmpty()
-    .withMessage("El ID del rol no puede ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
 
   body("roleName")
     .notEmpty()

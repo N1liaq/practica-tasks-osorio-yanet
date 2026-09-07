@@ -31,7 +31,7 @@ export const getPersonById = async (req, res) => {
     const personId = await PersonModel.findByPk(id);
 
     if (!personId) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "¡La persona que está buscando no fue encontrado!",
       });
     }
@@ -50,14 +50,14 @@ export const updatePerson = async (req, res) => {
     const personUpdateExists = await PersonModel.findByPk(id);
 
     if (!personUpdateExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message:
           "¡El ID de la persona que esta buscando para actualizar no fue encontrado!",
       });
     }
     await personUpdateExists.update(validatedData);
     await personUpdateExists.reload();
-    return res.status(200).json(personUpdateExists);
+    return res.status(201).json(personUpdateExists);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -72,7 +72,7 @@ export const deletePerson = async (req, res) => {
     const personDeleteExists = await PersonModel.findByPk(id);
 
     if (!personDeleteExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message:
           "¡El ID de la persona que está buscando para eliminar no fue encontrado!",
       });

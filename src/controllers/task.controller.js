@@ -70,7 +70,7 @@ export const getTaskById = async (req, res) => {
     });
 
     if (!taskIdExists) {
-      return res.status(404).json({ message: "La tarea no fue encontrada." });
+      return res.status(400).json({ message: "La tarea no fue encontrada." });
     }
 
     return res.status(200).json(taskIdExists);
@@ -107,7 +107,7 @@ export const updateTask = async (req, res) => {
     });
 
     if (!taskUpdateExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message:
           "¡El ID de la tarea que esta buscando para actualizar no fue encontrado!",
       });
@@ -117,7 +117,7 @@ export const updateTask = async (req, res) => {
 
     await taskUpdateExists.reload();
 
-    return res.status(200).json(taskUpdateExists);
+    return res.status(201).json(taskUpdateExists);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -132,7 +132,7 @@ export const deleteTask = async (req, res) => {
     const taskDeleteExists = await TaskModel.findByPk(id);
 
     if (!taskDeleteExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message:
           "¡El ID de la tarea que esta buscando para eliminar no fue encontrado!",
       });

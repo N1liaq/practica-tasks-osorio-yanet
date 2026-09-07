@@ -48,7 +48,7 @@ export const getUserTasks = async (req, res) => {
     });
     if (!userWithTasks) {
       return res
-        .status(404)
+        .status(400)
         .json("¡El usuario que está buscando no fue encontrado!");
     }
     return res.status(200).json(userWithTasks);
@@ -75,7 +75,7 @@ export const getUserById = async (req, res) => {
 
     if (!UserIdExists) {
       return res
-        .status(404)
+        .status(400)
         .json("¡El usuario que esta buscando no fué encontrado!");
     }
 
@@ -104,7 +104,7 @@ export const updateUser = async (req, res) => {
     });
 
     if (!userUpdateExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message:
           "¡El ID del usuario que esta buscando para actualizar no fue encontrado!",
       });
@@ -125,7 +125,7 @@ export const deleteUser = async (req, res) => {
 
     if (!userDeleteExists) {
       return res
-        .status(404)
+        .status(400)
         .json(
           "¡El ID del nameUser que esta buscando para eliminar no fué encontrado!",
         );
