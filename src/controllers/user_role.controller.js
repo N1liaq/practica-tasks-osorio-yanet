@@ -13,7 +13,9 @@ export const createUserRol = async (req, res) => {
         where: { user_id, role_id },
       });
       if (relationExists) {
-        return res.status(400).json("El usuario ya tiene asignado este rol.");
+        return res
+          .status(400)
+          .json("¡Ya hay un usuario con ese rol registrado!");
       }
     }
     await UserRoleModel.create(validatedData);
@@ -76,7 +78,18 @@ export const getUserRolById = async (req, res) => {
 export const updateUserRol = async (req, res) => {
   try {
     const validatedData = matchedData(req);
-    const { id } = validatedData;
+    const { id, role_id } = validatedData;
+
+    if (role_id) {
+      const relationExists = await UserRoleModel.findOne({
+        where: { role_id },
+      });
+      if (relationExists) {
+        return res
+          .status(400)
+          .json("¡Ya hay un usuario con ese rol registrado!");
+      }
+    }
 
     const userRoleUpdateExists = await UserRoleModel.findByPk(id, {
       include: [
