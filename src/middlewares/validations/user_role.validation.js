@@ -38,11 +38,11 @@ export const createUserRolValidation = [
 ];
 
 export const getUserRolByIdValidation = [
-  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo."),
 ];
 
 export const updateUserRolValidation = [
-  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo."),
 
   body("user_id")
     .optional()
@@ -58,5 +58,5 @@ export const updateUserRolValidation = [
 ];
 
 export const deleteUserRolValidation = [
-  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo.").isInt(),
+  param("id").notEmpty().withMessage("El ID del rol no debe ser nulo."),
 ];
