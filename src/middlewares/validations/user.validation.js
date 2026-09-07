@@ -67,7 +67,10 @@ export const getUserByIdValidation = [
 ];
 
 export const updateUserValidation = [
-  param("id").notEmpty().withMessage("El ID del usuario no debe ser nulo."),
+  param("id")
+    .notEmpty()
+    .withMessage("El ID del usuario no debe ser nulo.")
+    .isLength({ max: 3 }),
 
   body("nameUser")
     .optional()
