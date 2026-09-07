@@ -1,38 +1,24 @@
 import { UserModel } from "../models/user.model.js";
 import { UserRoleModel } from "../models/user_role.model.js";
 import { RoleModel } from "../models/role.model.js";
+import { matchedData } from "express-validator";
 
 export const createUserRol = async (req, res) => {
   try {
-    const { user_id, role_id } = req.body;
+    const validatedData = matchedData(req);
+    const { user_id, role_id } = validatedData;
 
-    if (!user_id || !role_id) {
-      return res.status(400).json({
-        message: "El user_id y el role_id son obligatorios.",
+    if (user_id && role_id) {
+      const relationExists = await UserRoleModel.findOne({
+        where: { user_id, role_id },
       });
+      if (relationExists) {
+        return res.status(400).json("El usuario ya tiene asignado este rol.");
+      }
     }
-    const userExists = await UserModel.findByPk(user_id);
+    await UserRoleModel.create(validatedData);
 
-    const roleExists = await RoleModel.findByPk(role_id);
-
-    if (!userExists) {
-      return res.status(404).json({
-        message: "¡El usuario que está buscando no fue encontrado!",
-      });
-    }
-
-    if (!roleExists) {
-      return res.status(404).json({
-        message: "¡El rol que está buscando no fue encontrado!",
-      });
-    }
-
-    const newUserRole = await UserRoleModel.create({
-      user_id,
-      role_id,
-    });
-
-    return res.status(201).json(newUserRole);
+    return res.status(201).json(validatedData);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
@@ -63,7 +49,8 @@ export const getAllUserRol = async (req, res) => {
 
 export const getUserRolById = async (req, res) => {
   try {
-    const { id } = req.params;
+    const validatedData = matchedData(req);
+    const { id } = validatedData;
 
     const userRole = await UserRoleModel.findByPk(id, {
       include: [
@@ -88,11 +75,8 @@ export const getUserRolById = async (req, res) => {
 
 export const updateUserRol = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const { role_id } = req.body;
-
-    const roleExists = await RoleModel.findByPk(role_id);
+    const validatedData = matchedData(req);
+    const { id } = validatedData;
 
     const userRoleUpdateExists = await UserRoleModel.findByPk(id, {
       include: [
@@ -108,25 +92,13 @@ export const updateUserRol = async (req, res) => {
       ],
     });
 
-    if (!role_id) {
-      return res.status(400).json({
-        message: "El role_id son obligatorios.",
-      });
-    }
-
-    if (!roleExists) {
-      return res.status(404).json({
-        message: "¡El rol que está buscando no fue encontrado!",
-      });
-    }
-
     if (!userRoleUpdateExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message:
-          "¡El ID del usuarioRol que está buscando para utilizar no fue encontrado!",
+          "¡El ID del userRole que está buscando para utilizar no fue encontrado!",
       });
     }
-    await userRoleUpdateExists.update({ role_id });
+    await userRoleUpdateExists.update(validatedData);
 
     await userRoleUpdateExists.reload();
 
@@ -139,18 +111,21 @@ export const updateUserRol = async (req, res) => {
 
 export const deleteUserRol = async (req, res) => {
   try {
-    const { id } = req.params;
+    const validatedData = matchedData(req);
+    const { id } = validatedData;
     const userRoleDeleteExists = await UserRoleModel.findByPk(id);
 
     if (!userRoleDeleteExists) {
-      return res.status(404).json({
+      return res.status(400).json({
         message:
           "¡El ID del usuarioRol que está buscando para eliminar no fue encontrado!",
       });
     }
 
     await userRoleDeleteExists.destroy();
-    res.status(200).json({ message: "El ID fue eliminado correctamente." });
+    res
+      .status(200)
+      .json({ message: "El ID del userRole fue eliminado correctamente." });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });

@@ -6,11 +6,38 @@ import {
   getUserRolById,
   updateUserRol,
 } from "../controllers/user_role.controller.js";
+import {
+  createUserRolValidation,
+  deleteUserRolValidation,
+  updateUserRolValidation,
+} from "../middlewares/validations/user_role.validation.js";
+import { validate } from "../middlewares/validate.js";
+import { getUserByIdValidation } from "../middlewares/validations/user.validation.js";
 
 export const userRoleRouter = Router();
 
-userRoleRouter.post("/rolesUsers", createUserRol);
-userRoleRouter.get("/rolesUsers", getAllUserRol);
-userRoleRouter.get("/rolesUsers/:id", getUserRolById);
-userRoleRouter.put("/rolesUsers/:id", updateUserRol);
-userRoleRouter.delete("/rolesUsers/:id", deleteUserRol);
+userRoleRouter.post(
+  "/rolesUsers",
+  createUserRolValidation,
+  validate,
+  createUserRol,
+);
+userRoleRouter.get("/rolesUsers", validate, getAllUserRol);
+userRoleRouter.get(
+  "/rolesUsers/:id",
+  getUserByIdValidation,
+  validate,
+  getUserRolById,
+);
+userRoleRouter.put(
+  "/rolesUsers/:id",
+  updateUserRolValidation,
+  validate,
+  updateUserRol,
+);
+userRoleRouter.delete(
+  "/rolesUsers/:id",
+  deleteUserRolValidation,
+  validate,
+  deleteUserRol,
+);
