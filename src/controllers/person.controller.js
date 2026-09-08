@@ -65,8 +65,8 @@ export const getPersonById = async (req, res) => {
 
 export const updatePerson = async (req, res) => {
   try {
-    const validatedData = matchedData(req);
-    const { id } = validatedData;
+    const validatedDataBody = matchedData(req, { locations: ["body"] });
+    const { id } = matchedData(req, { locations: ["params"] });
 
     const personUpdateExists = await PersonModel.findByPk(id);
 
@@ -76,9 +76,10 @@ export const updatePerson = async (req, res) => {
           "¡El ID de la persona que esta buscando para actualizar no fue encontrado!",
       });
     }
-    await personUpdateExists.update(validatedData);
-    await personUpdateExists.reload();
-    return res.status(201).json(personUpdateExists);
+    const personExists = await personExists.update(validatedDataBody);
+    return res
+      .status(201)
+      .json({ message: `usuario editado correctamente. ${personExists}` });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });

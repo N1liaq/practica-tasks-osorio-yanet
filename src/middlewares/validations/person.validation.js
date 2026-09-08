@@ -21,7 +21,10 @@ export const createPersonValidation = [
 ];
 
 export const getPersonByIdValidation = [
-  param("id").notEmpty().withMessage("El ID de la persona no debe ser nulo."),
+  param("id")
+    .notEmpty()
+    .withMessage("El ID de la persona no debe ser nulo.")
+    .isLength({ max: 3 }),
 ];
 
 export const updatePersonValidation = [
@@ -46,10 +49,7 @@ export const updatePersonValidation = [
     .isString()
     .isLength({ max: 100 })
     .withMessage("El lastname no debe pasar los 100 carácteres."),
-  param("id")
-    .notEmpty()
-    .withMessage("El ID de la persona no puede ser nulo.")
-    .isInt(),
+  param("id").notEmpty().withMessage("El ID de la persona no puede ser nulo."),
 ];
 
 export const deletePersonValidation = [
