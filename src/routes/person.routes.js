@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   CreatePerson,
   deletePerson,
+  getAllDeletePerson,
   getAllPerson,
   getPersonById,
   updatePerson,
@@ -18,6 +19,7 @@ export const personRouter = Router();
 
 personRouter.post("/people", createPersonValidation, validate, CreatePerson);
 personRouter.get("/people", validate, getAllPerson);
+personRouter.get("/peoplent", validate, getAllDeletePerson);
 personRouter.get(
   "/people/:id",
   getPersonByIdValidation,

@@ -2,6 +2,7 @@ import { matchedData } from "express-validator";
 import { PersonModel } from "../models/person.model.js";
 import { sequelize } from "../config/database.js";
 import { UserModel } from "../models/user.model.js";
+import { Op } from "sequelize";
 
 export const CreatePerson = async (req, res) => {
   try {
@@ -17,6 +18,24 @@ export const CreatePerson = async (req, res) => {
 export const getAllPerson = async (req, res) => {
   try {
     const people = await PersonModel.findAll();
+
+    return res.status(200).json(people);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Error interno del servidor." });
+  }
+};
+
+export const getAllDeletePerson = async (req, res) => {
+  try {
+    const people = await PersonModel.findAll({
+      paranoid: false,
+      where: {
+        deletedAt: {
+          [Op.ne]: null,
+        },
+      },
+    });
 
     return res.status(200).json(people);
   } catch (error) {
