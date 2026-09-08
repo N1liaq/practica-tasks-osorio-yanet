@@ -29,14 +29,15 @@ export const UserModel = sequelize.define(
     },
   },
   {
-    timestamps: false,
+    paranoid: true,
+    // timestamps: false,
   },
 );
 
 UserModel.belongsTo(PersonModel, {
   foreignKey: "person_id",
   as: "owner",
-  onDelete: "CASCADE",
+  // onDelete: "CASCADE",
 });
 
 PersonModel.hasOne(UserModel, { foreignKey: "person_id", as: "user" });

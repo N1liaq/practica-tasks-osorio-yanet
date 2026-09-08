@@ -14,6 +14,7 @@ export const PersonModel = sequelize.define(
     },
   },
   {
-    timestamps: false,
+    paranoid: true,
+    // timestamps: false,
   },
 );

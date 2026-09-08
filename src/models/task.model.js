@@ -28,14 +28,15 @@ export const TaskModel = sequelize.define(
     },
   },
   {
-    timestamps: false, //para que no salga la fecha y hora de creación y actualización
+    paranoid: true,
+    // timestamps: false, //para que no salga la fecha y hora de creación y actualización
   },
 );
 
 TaskModel.belongsTo(UserModel, {
   foreignKey: "user_id",
   as: "author",
-  onDelete: "CASCADE",
+  // onDelete: "CASCADE",
 });
 
 UserModel.hasMany(TaskModel, { foreignKey: "user_id", as: "tareas" });

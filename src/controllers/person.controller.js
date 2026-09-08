@@ -1,5 +1,7 @@
 import { matchedData } from "express-validator";
 import { PersonModel } from "../models/person.model.js";
+import { sequelize } from "../config/database.js";
+import { UserModel } from "../models/user.model.js";
 
 export const CreatePerson = async (req, res) => {
   try {
@@ -69,18 +71,34 @@ export const deletePerson = async (req, res) => {
     const validatedData = matchedData(req);
     const { id } = validatedData;
 
-    const personDeleteExists = await PersonModel.findByPk(id);
+    await sequelize.transaction(async (t) => {
+      const personExists = await PersonModel.findByPk(id, { transaction: t });
 
-    if (!personDeleteExists) {
-      return res.status(400).json({
-        message:
-          "¡El ID de la persona que está buscando para eliminar no fue encontrado!",
+      if (!personExists) {
+        return res.status(404).json({
+          message:
+            "¡El ID del person que está buscando para eliminar no fue encontrado!",
+        });
+      }
+      const userExists = await UserModel.findOne({
+        where: { person_id: id },
+        transaction: t,
       });
-    }
-    await personDeleteExists.destroy();
-    return res
-      .status(200)
-      .json({ message: "La persona fue eliminado correctamente." });
+
+      if (!userExists) {
+        return res.status(404).json({
+          message: "¡El user asociado a la persona no fue encontrado!",
+        });
+      }
+
+      await personExists.destroy();
+      await userExists.destroy();
+
+      return res.status(200).json({
+        message:
+          "La persona y su usuario asociado fueron eliminados correctamente.",
+      });
+    });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: "Error interno del servidor." });
